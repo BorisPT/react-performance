@@ -3,19 +3,36 @@
 
 import * as React from 'react'
 
-// define a function to load the globe
-const loadGlobe = () => { 
-  // interessante : we don't really care about the return value of the import statement
-  return import('../globe');
- };
-
- // interessante : lazy load the globe component
-const Globe = React.lazy(loadGlobe)
+let Globe = null; 
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
 
-  return (
+  const onMouseHouverHandler = (event) => { 
+
+    // console.log("MouseOver", event);
+
+    // interessante : if the module is already loaded, don't do anything.
+    if (Globe)
+    {
+      console.log("Module already loaded...");
+      return;
+    }
+
+    // interessante : import the module and then assign its default export to the Globe component. 
+    import('../globe').then(
+      module => {
+        console.log("Loaded Globe:", module);
+        Globe = module.default;
+      },
+      error => {
+        console.log("There was an error loading the module:", error);
+      },
+    )
+  
+   };
+
+  return (    
     <div
       style={{
         display: 'flex',
@@ -26,8 +43,8 @@ function App() {
         padding: '2rem',
       }}
     >
-      {/* // interessante : when the label gains focus, or when the user hovers over it, load the globe in the background. */}
-      <label style={{marginBottom: '1rem'}} onMouseOver={loadGlobe} onFocus={loadGlobe}>
+      {/* // interessante : when the user hovers over the label start loading the globe. */}
+      <label style={{marginBottom: '1rem'}} onMouseOver={onMouseHouverHandler}>
         <input
           type="checkbox"
           checked={showGlobe}
@@ -35,13 +52,12 @@ function App() {
         />
         {' show globe'}
       </label>
-      {/* // interessante : using the React.Suspense to have a lazy load before showing the component. */}
       <React.Suspense fallback={<div>Loading...</div>}>
       <div style={{width: 400, height: 400}}>
         {showGlobe ? <Globe /> : null}
       </div>
       </React.Suspense>
-    </div>
+    </div>    
     
   )
 }
