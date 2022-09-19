@@ -3,10 +3,11 @@
 
 import * as React from 'react'
 // 💣 remove this import
-import Globe from '../globe'
+// import Globe from '../globe'
 
 // 🐨 use React.lazy to create a Globe component which uses a dynamic import
 // to get the Globe component from the '../globe' module.
+const Globe = React.lazy(() => import('../globe'))
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -16,6 +17,7 @@ function App() {
   // 💰 try putting it in a few different places and observe how that
   // impacts the user experience.
   return (
+    <React.Suspense fallback={<div>Loading...</div>}>
     <div
       style={{
         display: 'flex',
@@ -38,6 +40,7 @@ function App() {
         {showGlobe ? <Globe /> : null}
       </div>
     </div>
+    </React.Suspense>
   )
 }
 // 🦉 Note that if you're not on the isolated page, then you'll notice that this
