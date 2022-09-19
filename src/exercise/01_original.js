@@ -7,32 +7,10 @@ import * as React from 'react'
 
 // 🐨 use React.lazy to create a Globe component which uses a dynamic import
 // to get the Globe component from the '../globe' module.
-let Globe = null;  // = React.lazy(() => import('../globe'))
+const Globe = React.lazy(() => import('../globe'))
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
-
-  const onMouseHouverHandler = (event) => { 
-
-    // console.log("MouseOver", event);
-
-    if (Globe)
-    {
-      console.log("Module already loaded...");
-      return;
-    }
-
-    import('../globe').then(
-      module => {
-        console.log("Loaded Globe:", module);
-        Globe = module.default;
-      },
-      error => {
-        console.log("There was an error loading the module:", error);
-      },
-    )
-  
-   };
 
   // 🐨 wrap the code below in a <React.Suspense /> component
   // with a fallback.
@@ -50,7 +28,7 @@ function App() {
         padding: '2rem',
       }}
     >
-      <label style={{marginBottom: '1rem'}} onMouseOver={onMouseHouverHandler}>
+      <label style={{marginBottom: '1rem'}}>
         <input
           type="checkbox"
           checked={showGlobe}
